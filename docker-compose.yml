@@ -1,0 +1,46 @@
+version: "3.3"
+services:
+    api:
+        container_name: api
+        build:
+            context: .
+
+            args:
+                - APP_ENV=${APP_ENV}
+        environment:
+            - APP_ENV=${APP_ENV}
+        working_dir: /app
+        volumes:
+            - ./:/app
+        ports:
+            - 8080:8080
+        depends_on:
+            - database
+
+    database:
+        image: mysql:5.7
+        container_name: database
+        environment:
+            MYSQL_DATABASE: default
+            MYSQL_USER: laravel
+            MYSQL_PASSWORD: secret
+            MYSQL_ROOT_PASSWORD: secret
+        ports:
+            - 3306:3306
+        volumes:
+            - database_data:/var/lib/mysql
+
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        container_name: phpmyadmin
+        environment:
+            - PMA_ARBITRARY=1
+            - MYSQL_ROOT_PASSWORD=secret
+        ports:
+            - 8081:80
+        depends_on:
+            - database
+
+volumes:
+    database_data:
+
